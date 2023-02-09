@@ -27,7 +27,7 @@ namespace Stride.Assets
             var projectFullPath = (dependentPackage.Container as SolutionProject)?.FullPath;
             if (projectFullPath != null)
             {
-                Task.Run(async () =>
+                Task.Run(() =>
                 {
                     var allFiles = Directory.GetFiles(Path.GetDirectoryName(projectFullPath), "*.*", SearchOption.AllDirectories);
                     // Search for all source files in project directory

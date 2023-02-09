@@ -104,7 +104,7 @@ namespace Stride.Assets.Presentation
                 effectCompilerMessageLayer.AddPacketHandler<RemoteEffectCompilerEffectRequested>(packet => HandleEffectCompilerRequestedPacket(packet, package));
 
                 // Run main socket loop
-                Task.Run(() => effectCompilerMessageLayer.MessageLoop());
+                await Task.Run(() => effectCompilerMessageLayer.MessageLoop());
             }
             catch
             {

@@ -636,7 +636,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
                 // Temporary code while we don't have an integrated text editor.
                 if (Editor.TextAssetTypes.Contains(asset.AssetType.Name))
                 {
-                    OpenWithTextEditor(asset, EditorSettings.ShaderEditor.GetValue());
+                    OpenWithTextEditor(asset, EditorSettings.ShaderEditor.GetValue()).ConfigureAwait(false);
                     return;
                 }
 
@@ -1356,7 +1356,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
             {
                 foreach (var package in packagePicker.SelectedPackages)
                 {
-                    selectedPackage.AddDependency(package);
+                    await selectedPackage.AddDependency(package);
                 }
             }
         }
