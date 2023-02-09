@@ -12,7 +12,7 @@ namespace Stride.Core.Reflection
     /// The old descriptor, kept here to avoid compatibility error.
     /// Provides a descriptor for a <see cref="System.Collections.ICollection"/>.
     /// </summary>
-    [Obsolete("This class is kept for compatibility, shouldn't be used in new feathers")]
+    [Obsolete("This class is kept for compatibility, shouldn't be used in new features")]
     public class OldCollectionDescriptor : CollectionDescriptor
     {
         private static readonly object[] EmptyObjects = new object[0];
