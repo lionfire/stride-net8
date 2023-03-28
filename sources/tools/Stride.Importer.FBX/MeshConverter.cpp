@@ -2082,6 +2082,54 @@ public:
 		return nullptr;
 	}
 
+	int ProcessAnimationCount(String^ inputFilename)
+	{
+		try 
+		{
+			auto animationCount = ProcessAnimationCount(inputFilename);
+			return animationCount;
+		}
+		finally
+		{
+			Destroy();
+		}
+		return 0;
+	}
+
+	AnimationInfo^ ConvertAnimationByIndex(String^ inputFilename, String^ vfsOutputFilename, bool importCustomAttributeAnimations, int index)
+	{
+		try
+		{
+			Initialize(inputFilename, vfsOutputFilename, ImportConfiguration::ImportAnimationsOnly());
+
+			auto animationConverter = gcnew AnimationConverter(logger, sceneMapping);
+			return animationConverter->ProcessAnimationByIndex(inputFilename, vfsOutputFilename, importCustomAttributeAnimations, index);
+		}
+		finally
+		{
+			Destroy();
+		}
+
+		return nullptr;
+	}
+
+	List<AnimationInfo^>^ ConvertAnimations(String^ inputFilename, String^ vfsOutputFilename, bool importCustomAttributeAnimations)
+	{
+		try
+		{
+			Initialize(inputFilename, vfsOutputFilename, ImportConfiguration::ImportAnimationsOnly());
+
+			auto animationConverter = gcnew AnimationConverter(logger, sceneMapping);
+			return animationConverter->ProcessAnimations(inputFilename, vfsOutputFilename, importCustomAttributeAnimations);
+		}
+		finally
+		{
+			Destroy();
+		}
+
+		return nullptr;
+	}
+
 	AnimationInfo^ ConvertAnimation(String^ inputFilename, String^ vfsOutputFilename, bool importCustomAttributeAnimations)
 	{
 		try

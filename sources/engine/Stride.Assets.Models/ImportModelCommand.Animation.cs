@@ -12,6 +12,7 @@ using Stride.Core.Serialization.Contents;
 using Stride.Updater;
 using Stride.Animations;
 using Stride.Rendering;
+using ServiceWire;
 
 namespace Stride.Assets.Models
 {
@@ -31,7 +32,7 @@ namespace Stride.Assets.Models
             AdjustSkeleton(modelSkeleton);
 
             TimeSpan duration;
-            var animationClips = LoadAnimation(commandContext, contentManager, out duration);
+            var animationClips = LoadAnimation(commandContext, contentManager, out duration)[0].AnimationClips;
 
             // Fix the animation frames
             double startFrameSeconds = StartFrame.TotalSeconds;
@@ -50,7 +51,10 @@ namespace Stride.Assets.Models
             if (duration > durationTimeSpan)
                 duration = durationTimeSpan;
 
-            var animationClip = new AnimationClip { Duration = duration };
+            var animationClip = new AnimationClip 
+            { 
+                Duration = duration,
+            };
 
             if (animationClips.Count > 0)
             {

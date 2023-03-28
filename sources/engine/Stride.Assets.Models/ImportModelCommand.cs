@@ -15,6 +15,7 @@ using Stride.Shaders;
 using System.Linq;
 using Stride.Core.Assets;
 using Stride.Core.Serialization.Contents;
+using Stride.Importer.Common;
 
 namespace Stride.Assets.Models
 {
@@ -67,13 +68,16 @@ namespace Stride.Assets.Models
 
             try
             {
+                if(Mode == ExportMode.Animation)
+                {
+                    var exportedAnimations = ExportAnimation(commandContext, assetManager, FailOnEmptyAnimation);
+
+                }
+                
                 object exportedObject;
 
                 switch (Mode)
                 {
-                    case ExportMode.Animation:
-                        exportedObject = ExportAnimation(commandContext, assetManager, FailOnEmptyAnimation);
-                        break;
                     case ExportMode.Skeleton:
                         exportedObject = ExportSkeleton(commandContext, assetManager);
                         break;
@@ -133,7 +137,7 @@ namespace Stride.Assets.Models
         
         protected abstract Model LoadModel(ICommandContext commandContext, ContentManager contentManager);
 
-        protected abstract Dictionary<string, AnimationClip> LoadAnimation(ICommandContext commandContext, ContentManager contentManager, out TimeSpan duration);
+        protected abstract List<AnimationInfo> LoadAnimation(ICommandContext commandContext, ContentManager contentManager, out TimeSpan duration);
 
         protected abstract Skeleton LoadSkeleton(ICommandContext commandContext, ContentManager contentManager);
 

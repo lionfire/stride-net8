@@ -9,6 +9,7 @@ using Stride.Core.BuildEngine;
 using Stride.Core.Serialization.Contents;
 using Stride.Animations;
 using Stride.Rendering;
+using Stride.Importer.Common;
 
 namespace Stride.Assets.Models
 {
@@ -31,12 +32,12 @@ namespace Stride.Assets.Models
             return sceneData;
         }
 
-        protected override Dictionary<string, AnimationClip> LoadAnimation(ICommandContext commandContext, ContentManager contentManager, out TimeSpan duration)
+        protected override List<AnimationInfo> LoadAnimation(ICommandContext commandContext, ContentManager contentManager, out TimeSpan duration)
         {
             var meshConverter = CreateMeshConverter(commandContext);
-            var sceneData = meshConverter.ConvertAnimation(SourcePath, Location, ImportCustomAttributes);
-            duration = sceneData.Duration;
-            return sceneData.AnimationClips;
+            var sceneData = meshConverter.ConvertAnimations(SourcePath, Location, ImportCustomAttributes);
+            duration = sceneData[0].Duration;
+            return sceneData;
         }
 
         protected override Skeleton LoadSkeleton(ICommandContext commandContext, ContentManager contentManager)

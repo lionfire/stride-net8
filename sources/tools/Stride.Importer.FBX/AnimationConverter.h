@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "SceneMapping.h"
+#include <vector>
 
 using namespace System;
 using namespace System::Text;
@@ -64,6 +65,127 @@ namespace Stride {
 					return false;
 				}
 
+				int ProcessAnimationCount(String^ inputFilename)
+				{
+					int animStackCount = scene->GetMemberCount<FbxAnimStack>();
+					return animStackCount;
+				}
+
+				List<AnimationInfo^>^ ProcessAnimations(String^ inputFilename, String^ vfsOutputFilename, bool importCustomAttributeAnimations)
+				{
+					auto animationDataDictionary = gcnew List<AnimationInfo^>();
+					auto animationData = gcnew AnimationInfo();
+
+					int animStackCount = scene->GetMemberCount<FbxAnimStack>();
+
+					for (int i = 0; i < animStackCount; ++i)
+					{
+						// Get the animation stack at index i
+						FbxAnimStack* animStack = scene->GetMember<FbxAnimStack>(i);
+
+						FbxTime animStart, animEnd;
+
+						// Store start/end info
+						const FbxTakeInfo* take_info = scene->GetTakeInfo(animStack->GetName());
+						if (take_info)
+						{
+							animStart = take_info->mLocalTimeSpan.GetStart();
+							animEnd = take_info->mLocalTimeSpan.GetStop();
+						}
+						else
+						{
+							// Take the time line value.
+							FbxTimeSpan lTimeLineTimeSpan;
+							scene->GetGlobalSettings().GetTimelineDefaultTimeSpan(lTimeLineTimeSpan);
+							animStart = lTimeLineTimeSpan.GetStart();
+							animEnd = lTimeLineTimeSpan.GetStop();
+						}
+
+						animStartTime = FBXTimeToTimeSpan(animStart);
+
+						// Optimized code
+						// From http://www.the-area.com/forum/autodesk-fbx/fbx-sdk/resetpivotsetandconvertanimation-issue/page-1/
+						scene->GetRootNode()->ResetPivotSet(FbxNode::eDestinationPivot);
+						SetPivotStateRecursive(scene->GetRootNode());
+						scene->GetRootNode()->ConvertPivotAnimationRecursive(animStack, FbxNode::eDestinationPivot, 30.0f);
+
+						int animLayerCount = animStack->GetMemberCount<FbxAnimLayer>();
+						
+						FbxAnimLayer* animLayer = animStack->GetMember<FbxAnimLayer>(0);
+						ProcessAnimationByNode(animationData->AnimationClips, animLayer, scene->GetRootNode(), importCustomAttributeAnimations);
+
+						scene->GetRootNode()->ResetPivotSet(FbxNode::eSourcePivot);
+
+						// Set duration
+						// Note: we can't use animEnd - animStart since some FBX has wrong data there
+						for each (auto animationClip in animationData->AnimationClips)
+						{
+							if (animationData->Duration < animationClip.Value->Duration)
+								animationData->Duration = animationClip.Value->Duration;
+						}
+
+						animationDataDictionary->Add(animationData);
+					}
+
+					return animationDataDictionary;
+				}
+
+				AnimationInfo^ ProcessAnimationByIndex(String^ inputFilename, String^ vfsOutputFilename, bool importCustomAttributeAnimations, int index)
+				{
+					auto animationData = gcnew AnimationInfo();
+
+					int animStackCount = scene->GetMemberCount<FbxAnimStack>();
+
+					// Get the animation stack at index i
+					FbxAnimStack* animStack = scene->GetMember<FbxAnimStack>(index);
+
+					FbxTime animStart, animEnd;
+
+					// Store start/end info
+					const FbxTakeInfo* take_info = scene->GetTakeInfo(animStack->GetName());
+					if (take_info)
+					{
+						animStart = take_info->mLocalTimeSpan.GetStart();
+						animEnd = take_info->mLocalTimeSpan.GetStop();
+					}
+					else
+					{
+						// Take the time line value.
+						FbxTimeSpan lTimeLineTimeSpan;
+						scene->GetGlobalSettings().GetTimelineDefaultTimeSpan(lTimeLineTimeSpan);
+						animStart = lTimeLineTimeSpan.GetStart();
+						animEnd = lTimeLineTimeSpan.GetStop();
+					}
+
+					animStartTime = FBXTimeToTimeSpan(animStart);
+
+					// Optimized code
+					// From http://www.the-area.com/forum/autodesk-fbx/fbx-sdk/resetpivotsetandconvertanimation-issue/page-1/
+					scene->GetRootNode()->ResetPivotSet(FbxNode::eDestinationPivot);
+					SetPivotStateRecursive(scene->GetRootNode());
+					scene->GetRootNode()->ConvertPivotAnimationRecursive(animStack, FbxNode::eDestinationPivot, 30.0f);
+
+					int animLayerCount = animStack->GetMemberCount<FbxAnimLayer>();
+
+					for (int j = 0; j < animLayerCount; j++)
+					{
+						FbxAnimLayer* animLayer = animStack->GetMember<FbxAnimLayer>(j);
+						ProcessAnimationByNode(animationData->AnimationClips, animLayer, scene->GetRootNode(), importCustomAttributeAnimations);
+					}
+
+					scene->GetRootNode()->ResetPivotSet(FbxNode::eSourcePivot);
+
+					// Set duration
+					// Note: we can't use animEnd - animStart since some FBX has wrong data there
+					for each (auto animationClip in animationData->AnimationClips)
+					{
+						if (animationData->Duration < animationClip.Value->Duration)
+							animationData->Duration = animationClip.Value->Duration;
+					}
+
+					return animationData;
+				}
+
 				AnimationInfo^ ProcessAnimation(String^ inputFilename, String^ vfsOutputFilename, bool importCustomAttributeAnimations)
 				{
 					auto animationData = gcnew AnimationInfo();
@@ -71,7 +193,7 @@ namespace Stride {
 					int animStackCount = scene->GetMemberCount<FbxAnimStack>();
 					if (animStackCount == 0)
 						return animationData;
-						
+
 					// We support only anim stack count == 1
 					if (animStackCount > 1)
 					{
@@ -595,7 +717,14 @@ namespace Stride {
 
 					if (animationClip->Curves->Count > 0)
 					{
-						animationClips->Add(nodeName, animationClip);
+						if (animationClips->ContainsKey(nodeName))
+						{
+							//I dont know why this is here learning needed
+						}
+						else
+						{
+							animationClips->Add(nodeName, animationClip);
+						}
 					}
 
 					for (int i = 0; i < pNode->GetChildCount(); ++i)
