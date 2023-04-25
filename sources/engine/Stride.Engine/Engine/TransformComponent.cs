@@ -256,6 +256,48 @@ namespace Stride.Engine
         }
 
         /// <summary>
+        /// Gets the world position.
+        /// Default call does not recalcuate the position. It just gets the last frame's position quickly.
+        /// If you pass true to this function, it will update the world position (which is a costly procedure) to get the most up-to-date position.
+        /// </summary>
+        public Vector3 WorldPosition(bool recalculate = false)
+        {
+            if (recalculate) UpdateWorldMatrix();
+            return parent == null ? Position : WorldMatrix.TranslationVector;
+        }
+
+        /// <summary>
+        /// Gets the world scale.
+        /// Default call does not recalcuate the scale. It just gets the last frame's scale quickly.
+        /// If you pass true to this function, it will update the world position (which is a costly procedure) to get the most up-to-date scale.
+        /// </summary>
+        public Vector3 WorldScale(bool recalculate = false)
+        {
+            if (recalculate) UpdateWorldMatrix();
+            if (parent == null) return Scale;
+            WorldMatrix.GetScale(out Vector3 scale);
+            return scale;
+        }
+
+        /// <summary>
+        /// Gets the world rotation.
+        /// Default call does not recalcuate the rotation. It just gets the last frame's rotation (relatively) quickly.
+        /// If you pass true to this function, it will update the world position (which is a costly procedure) to get the most up-to-date rotation.
+        /// </summary>
+        public Quaternion WorldRotation(bool recalculate = false)
+        {
+            if (recalculate) UpdateWorldMatrix();
+            if (parent != null && WorldMatrix.GetRotationQuaternion(out Quaternion q))
+            {
+                return q;
+            }
+            else
+            {
+                return Rotation;
+            }
+        }
+
+        /// <summary>
         /// Updates the local matrix.
         /// If <see cref="UseTRS"/> is true, <see cref="LocalMatrix"/> will be updated from <see cref="Position"/>, <see cref="Rotation"/> and <see cref="Scale"/>.
         /// </summary>
@@ -407,4 +449,19 @@ namespace Stride.Engine
             }
         }
     }
+
+    public enum IMMOBILITY
+    {
+        FullMotion = 0,
+        EverythingImmobile = 1,
+        JustMeImmobile = 2
+    }
+
+    public enum HIERARCHY_MODE
+    {
+        Normal = 0,
+        IgnoreFinalRotation = 1,
+        IgnoreAllRotation = 2
+    }
+
 }
