@@ -28,6 +28,7 @@ namespace Stride.Engine
     [DataContract("Entity")]
     public sealed class Entity : ComponentBase, IEnumerable<EntityComponent>, IIdentifiable
     {
+
         internal TransformComponent TransformValue;
         internal Scene SceneValue;
 
@@ -183,6 +184,17 @@ namespace Stride.Engine
         }
 
         /// <summary>
+        /// Gets the first component of the specified type. without EntityComponent retrictions
+        /// <para>Also see <see cref="Get{T}"/></para>
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public T GetComponent<T>()
+        {
+            return this.OfType<T>().FirstOrDefault();
+        }
+
+        /// <summary>
         /// Gets the index'th component of the specified type. See remarks.
         /// </summary>
         /// <typeparam name="T">Type of the component</typeparam>
@@ -210,6 +222,11 @@ namespace Stride.Engine
         public IEnumerable<T> GetAll<T>() where T : EntityComponent
         {
             return Components.GetAll<T>();
+        }
+
+        public IEnumerable<T> GetAllComponents<T>()
+        {
+            return this.OfType<T>();
         }
 
         /// <summary>
