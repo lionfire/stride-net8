@@ -134,6 +134,8 @@ namespace Stride.Engine
         /// </summary>
         [DataMemberIgnore]
         public TransformComponent Transform => TransformValue;
+        [DataMemberIgnore]
+        public Vector3 WorldPosition => TransformValue.WorldMatrix.TranslationVector;
 
         /// <summary>
         /// The components stored in this entity.
