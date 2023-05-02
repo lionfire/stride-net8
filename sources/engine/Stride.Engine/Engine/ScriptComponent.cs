@@ -31,6 +31,9 @@ namespace Stride.Engine
     [ComponentCategory("Scripts")]
     public abstract class ScriptComponent : EntityComponent, ICollectorHolder
     {
+        [DataMemberIgnore]
+        public float DeltaTime => (float)Game.UpdateTime.Elapsed.TotalSeconds;
+
         public const uint LiveScriptingMask = 128;
 
         /// <summary>
