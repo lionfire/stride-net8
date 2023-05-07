@@ -81,9 +81,7 @@ namespace Stride.Graphics
 
         private void ClearStateImpl()
         {
-
-            // if this throws an error check the values the fix may be a simple null check.
-            NativeDeviceContext.ClearState();
+            NativeDeviceContext?.ClearState();
 
             for (int i = 0; i < samplerStates.Length; ++i)
                 samplerStates[i] = null;
