@@ -205,6 +205,10 @@ namespace Stride.Core.Storage
         public void Write([NotNull] string str)
             => Write(str.AsSpan());
 
+#if !STRIDE_ASSEMBLY_PROCESSOR
+        // NOTE: The AssemblyProcessor can't access MemoryMarshal when compiled as `netstandard2.0`
+        //       This can be removed when Visual Studio's MSBuild can load `net6.0+` assemblies without consuming them as `netstandard2.0`
+
         /// <summary>
         /// Writes the specified buffer to this instance.
         /// </summary>
@@ -213,6 +217,7 @@ namespace Stride.Core.Storage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Write<T>(T data) where T : unmanaged
             => Write(MemoryMarshal.CreateReadOnlySpan(ref Unsafe.As<T, byte>(ref data), Unsafe.SizeOf<T>()));
+#endif
 
         /// <summary>
         /// Writes the specified buffer to this instance.
@@ -407,7 +412,13 @@ namespace Stride.Core.Storage
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if NETSTANDARD || NETFRAMEWORK
+        // NOTE: This is a polyfill needed because BitOperations is .NET Core 3.0+
+        //       It can be removed when Visual Studio's MSBuild can load `net6.0+` assemblies without consuming them as `netstandard2.0`
+        static uint RotateLeft(uint x, byte r) => (x << r) | (x >> (32 - r));
+#else
         static uint RotateLeft(uint x, byte r) => BitOperations.RotateLeft(x, r);
+#endif
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static uint FMix(uint h)
