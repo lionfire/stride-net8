@@ -41,6 +41,9 @@ namespace Stride.Games
                 case AppContextType.iOS:
                     res = NewGameContextiOS();
                     break;
+                case AppContextType.AvaloniaDesktop:
+                    res = NewGameContextAvaloniaDesktop(requestedWidth, requestedHeight, isUserManagingRun);
+                    break;
             }
 
             if (res == null)
@@ -49,6 +52,11 @@ namespace Stride.Games
             }
 
             return res;
+        }
+
+        private static GameContext NewGameContextAvaloniaDesktop(int requestedWidth, int requestedHeight, bool isUserManagingRun)
+        {
+            return new GameContextAvalonia(null, requestedWidth, requestedHeight, isUserManagingRun);
         }
 
         public static GameContext NewGameContextiOS()
