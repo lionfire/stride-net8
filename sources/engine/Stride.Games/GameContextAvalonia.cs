@@ -1,14 +1,12 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Avalonia.Controls;
+using Stride.Games.AvaloniaDesktop;
+using Stride.Graphics.Avalonia;
 
 namespace Stride.Games;
-internal class GameContextAvalonia : GameContext<NativeControlHost>
+internal class GameContextAvalonia : GameContext<EmbeddedAvaloniaWindow>
 {
-    public GameContextAvalonia(NativeControlHost control, int requestedWidth = 0, int requestedHeight = 0, bool isUserManagingRun = false) : base(control, requestedWidth, requestedHeight, isUserManagingRun)
+    public GameContextAvalonia(EmbeddedAvaloniaWindow control, int requestedWidth = 0, int requestedHeight = 0, bool isUserManagingRun = false) 
+        : base(control ?? new EmbeddedAvaloniaWindow(), requestedWidth, requestedHeight, isUserManagingRun)
     {
         ContextType = AppContextType.AvaloniaDesktop;
     }

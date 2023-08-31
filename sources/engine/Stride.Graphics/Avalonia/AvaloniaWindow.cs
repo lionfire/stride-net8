@@ -10,10 +10,15 @@ using Avalonia.Controls;
 using Avalonia.Platform;
 
 namespace Stride.Graphics.Avalonia;
-public class AvaloniaWindow : NativeControlHost
+public class EmbeddedAvaloniaWindow : NativeControlHost
 {
+    public IntPtr WindowHandle;
+
     protected override IPlatformHandle CreateNativeControlCore(IPlatformHandle parent)
     {
+        var piHandle = base.CreateNativeControlCore(parent);
+        WindowHandle = piHandle.Handle;
+
         return base.CreateNativeControlCore(parent);
     }
 

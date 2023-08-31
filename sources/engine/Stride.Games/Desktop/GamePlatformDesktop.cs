@@ -25,6 +25,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using Stride.Core;
+using Stride.Games.AvaloniaDesktop;
 
 namespace Stride.Games
 {
@@ -55,6 +56,8 @@ namespace Stride.Games
         {
             switch (type)
             {
+                case AppContextType.AvaloniaDesktop:
+                    return new GameWindowAvalonia();
 #if STRIDE_UI_SDL
                  case AppContextType.DesktopSDL:
                     return new GameWindowSDL();
