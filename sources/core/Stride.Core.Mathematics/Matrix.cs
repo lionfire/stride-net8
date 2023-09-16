@@ -3096,7 +3096,7 @@ namespace Stride.Core.Mathematics
         static ref Matrix UnsafeRefFromDotNet(in MatrixDotnet m) => ref Unsafe.As<MatrixDotnet, Matrix>(ref Unsafe.AsRef(in m));
 
         /// <summary>
-        /// Adds two matrices. test2
+        /// Adds two matrices. test23
         /// </summary>
         /// <param name="left">The first matrix to add.</param>
         /// <param name="right">The second matrix to add.</param>
