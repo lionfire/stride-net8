@@ -1,3 +1,11 @@
+## Purpose of this fork
+
+My customizations on top of @doprez's .NET 8 customization of stride.
+ - This will become obsolete once Stride is released for .NET 8, though I will then create another fork in lionfire/stride for my customizations
+
+##### Original readme:
+------
+
 <p>
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="https://media.githubusercontent.com/media/stride3d/stride/84092e8aa924e2039b3f8d968907b48fc699c6b3/sources/data/images/Logo/stride-logo-readme-white.png">
